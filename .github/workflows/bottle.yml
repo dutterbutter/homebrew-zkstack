@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: Homebrew/actions/setup-homebrew@master
+      - uses: Homebrew/actions/setup-homebrew@v1
 
       # Tap the repo that is being built (".")
       - name: Tap local formula
@@ -28,7 +28,7 @@ jobs:
           brew install --build-bottle zkstack
           brew bottle zkstack --json
 
-      - name: Upload bottles & commit bottle block
-        uses: Homebrew/actions/upload-bottles@master
+      - name: Publish bottles
+        uses: Homebrew/actions/publish-bottles@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
