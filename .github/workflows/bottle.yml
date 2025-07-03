@@ -29,6 +29,6 @@ jobs:
           brew bottle zkstack --json
 
       - name: Publish bottles
-        uses: Homebrew/actions/publish-bottles@v1
+        uses: Homebrew/actions/publish-bottles@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
