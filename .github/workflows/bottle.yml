@@ -22,13 +22,14 @@ jobs:
       - name: Build bottle
         run: |
           brew install --build-bottle --formula Formula/zkstack.rb
-          brew bottle  --json zkstack
+          mkdir bottles
+          brew bottle --json zkstack
+          mv *.bottle.* bottles/
 
       - name: Publish bottles
         uses: Homebrew/actions/post-build@main
         with:
-          bottles-directory: .
+          bottles-directory: bottles
           logs-directory: .
           runner: ${{ matrix.os }}
-          upload-bottles: true 
           cleanup: true
