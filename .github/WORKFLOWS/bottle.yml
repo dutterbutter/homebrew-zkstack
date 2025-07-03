@@ -1,0 +1,33 @@
+name: Build & Upload Bottles
+on:
+  push:
+    paths: [ "Formula/zkstack.rb" ]
+  workflow_dispatch:
+
+env:
+  HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+
+jobs:
+  bottle:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, macos-13, ubuntu-latest, ubuntu-22.04]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Homebrew/actions/setup-homebrew@master
+
+      # Tap the repo that is being built (".")
+      - name: Tap local formula
+        run: brew tap dutterbutter/homebrew-zkstack .
+
+      - name: Build bottle
+        run: |
+          brew install --build-bottle zkstack
+          brew bottle zkstack --json
+
+      - name: Upload bottles & commit bottle block
+        uses: Homebrew/actions/upload-bottles@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
