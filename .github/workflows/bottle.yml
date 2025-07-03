@@ -9,6 +9,7 @@ env:
 
 jobs:
   bottle:
+    name: Build Bottles
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
