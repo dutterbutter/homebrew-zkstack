@@ -15,7 +15,7 @@ class Zkstack < Formula
 
   def install
     ENV["RUSTUP_TOOLCHAIN"] = "nightly-2024-09-01"
-    system "cargo", "install", *std_cargo_args
+    system "cargo", "install", *std_cargo_args(path: "crates/zkstack")
   end
 
   test do
