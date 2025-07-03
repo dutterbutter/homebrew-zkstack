@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: Homebrew/actions/setup-homebrew@v1
+      - uses: Homebrew/actions/setup-homebrew@main
 
       # Tap the repo that is being built (".")
       - name: Tap local formula
