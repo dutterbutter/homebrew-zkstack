@@ -1,20 +1,21 @@
-# Formula/zkstack.rb
 class Zkstack < Formula
-  desc     "ZKsync Stack CLI - spin up local or prod zkStack chains"
+  desc     "ZKsync Stack CLI - spin up local or prod ZK Stack chains"
   homepage "https://github.com/matter-labs/zksync-era/tree/main/zkstack_cli"
   url      "https://github.com/dutterbutter/zkstack-cli/archive/refs/tags/v0.1.2.tar.gz"
-  sha256   "30abf5b920d69b516ef42898ba285f03b77749b80b9d832bd877644d7d99557e"
+  sha256   "…"
   license  "MIT"
 
   depends_on "rust" => :build
 
-  livecheck do
-    url :stable
-    regex(/^v?(\d+\.\d+\.\d+)$/i)
+  on_linux do
+    depends_on "pkg-config" => :build
+    depends_on "openssl@3"
   end
 
   def install
     ENV["RUSTUP_TOOLCHAIN"] = "nightly-2024-09-01"
+    # let Cargo see Homebrew's OpenSSL on Linux
+    ENV["OPENSSL_DIR"] = Formula["openssl@3"].opt_prefix if OS.linux?
     system "cargo", "install", *std_cargo_args(path: "crates/zkstack")
   end
 
