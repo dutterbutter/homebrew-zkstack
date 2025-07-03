@@ -27,4 +27,8 @@ jobs:
       - name: Publish bottles
         uses: Homebrew/actions/post-build@main
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          bottles-directory: .
+          logs-directory: .
+          runner: ${{ matrix.os }}
+          upload-bottles: true 
+          cleanup: true
