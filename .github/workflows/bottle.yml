@@ -19,14 +19,10 @@ jobs:
 
       - uses: Homebrew/actions/setup-homebrew@main
 
-      # Tap the repo that is being built (".")
-      - name: Tap local formula
-        run: brew tap dutterbutter/homebrew-zkstack .
-
       - name: Build bottle
         run: |
-          brew install --build-bottle zkstack
-          brew bottle zkstack --json
+          brew install --build-bottle --formula Formula/zkstack.rb
+          brew bottle  --json zkstack
 
       - name: Publish bottles
         uses: Homebrew/actions/post-build@main
