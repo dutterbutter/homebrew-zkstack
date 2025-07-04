@@ -67,7 +67,7 @@ jobs:
       - name: Download bottle artifacts
         uses: actions/download-artifact@v4
         with:
-          path: bottles
+          path: ${{ github.workspace }}/bottles
           pattern: bottles-*
           merge-multiple: true
 
@@ -79,8 +79,8 @@ jobs:
           HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.PAT_PUSH }}
         uses: Homebrew/actions/post-build@main
         with:
-          bottles-directory: bottles
-          logs-directory: bottles 
+          bottles-directory: ${{ github.workspace }}/bottles 
+          logs-directory: ${{ github.workspace }}/bottles
           runner: macos-latest
           upload-bottles: true
           cleanup: false
