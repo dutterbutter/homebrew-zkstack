@@ -63,7 +63,9 @@ jobs:
             --skip-online-checks \
             --skip-dependents \
             zkstack
-          mv *.bottle.* "$BOTTLES_DIR/"
+          shopt -s nullglob
+          mkdir -p "$BOTTLES_DIR"
+          mv *.bottle.* "$BOTTLES_DIR/" || :
 
       - uses: actions/upload-artifact@v4
         with:
