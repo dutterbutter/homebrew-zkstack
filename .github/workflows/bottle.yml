@@ -52,7 +52,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: bottles-${{ matrix.runner }}
-          path: bottles 
+          path: bottles/*.* 
 
 # ──────────────────────────────
 # 2. Aggregate + publish + commit
