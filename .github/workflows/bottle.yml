@@ -41,9 +41,17 @@ jobs:
 
       - name: Prepare dirs
         run: |
-          echo "BOTTLES_DIR=$GITHUB_WORKSPACE/bottles" >>"$GITHUB_ENV"
-          echo "LOGS_DIR=$GITHUB_WORKSPACE/bottles/logs" >>"$GITHUB_ENV"
+          # 1. Define paths as normal shell vars
+          BOTTLES_DIR="$GITHUB_WORKSPACE/bottles"
+          LOGS_DIR="$BOTTLES_DIR/logs"
+
+          # 2. Create the directories right away
           mkdir -p "$BOTTLES_DIR" "$LOGS_DIR"
+
+          # 3. Export for subsequent steps
+          echo "BOTTLES_DIR=$BOTTLES_DIR" >> "$GITHUB_ENV"
+          echo "LOGS_DIR=$LOGS_DIR"       >> "$GITHUB_ENV"
+
 
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
@@ -76,9 +84,17 @@ jobs:
       
       - name: Prepare dirs
         run: |
-          echo "BOTTLES_DIR=$GITHUB_WORKSPACE/bottles" >>"$GITHUB_ENV"
-          echo "LOGS_DIR=$GITHUB_WORKSPACE/bottles/logs" >>"$GITHUB_ENV"
+          # 1. Define paths as normal shell vars
+          BOTTLES_DIR="$GITHUB_WORKSPACE/bottles"
+          LOGS_DIR="$BOTTLES_DIR/logs"
+
+          # 2. Create the directories right away
           mkdir -p "$BOTTLES_DIR" "$LOGS_DIR"
+
+          # 3. Export for subsequent steps
+          echo "BOTTLES_DIR=$BOTTLES_DIR" >> "$GITHUB_ENV"
+          echo "LOGS_DIR=$LOGS_DIR"       >> "$GITHUB_ENV"
+
 
       - uses: actions/download-artifact@v4
         with:
