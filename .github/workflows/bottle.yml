@@ -1,43 +1,93 @@
-name: Build & Upload Bottles
+name: build-and-publish-bottles
 
+# ──────────────────────────────
+# Required permissions
+# ──────────────────────────────
 permissions:
-  contents: write
-  id-token: write
-  attestations: write
-  packages: write
+  contents: write      # commit the bottle stanza back
+  packages: write      # upload bottles to GitHub Packages
+  id-token: write      # provenance/SLSA signing
+  attestations: write  # provenance/SLSA signing
 
+# ──────────────────────────────
+# Triggers
+# ──────────────────────────────
 on:
   push:
-    paths: [ "Formula/zkstack.rb" ]
-  workflow_dispatch:
+    paths:
+      - "Formula/zkstack.rb"   # rebuild only when the formula changes
+  workflow_dispatch:           # manual rebuild if needed
 
+# ──────────────────────────────
+# Global env – speed up CI
+# ──────────────────────────────
 env:
   HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
 
+# ──────────────────────────────
+# 1. Build bottles on every OS
+# ──────────────────────────────
 jobs:
-  bottle:
-    name: Build Bottles
-    runs-on: ${{ matrix.os }}
+  build:
+    name: Build bottles (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, macos-13, ubuntu-latest, ubuntu-22.04]
+        runner: [macos-latest, macos-13, ubuntu-22.04, ubuntu-latest]
+
     steps:
       - uses: actions/checkout@v4
 
-      - uses: Homebrew/actions/setup-homebrew@main
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      # Optional but recommended – fail fast on formula errors
+      - name: Lint formula
+        run: |
+          brew style Formula/zkstack.rb
+          brew audit --strict Formula/zkstack.rb
 
       - name: Build bottle
         run: |
-          brew install --build-bottle --formula Formula/zkstack.rb
-          mkdir bottles
-          brew bottle --json zkstack
-          mv *.bottle.* bottles/
+          brew install --build-bottle Formula/zkstack.rb
+          brew bottle --json zkstack      # writes *.bottle.*
+
+      - name: Upload bottle artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bottles-${{ matrix.runner }}
+          path: "*.bottle.*"
+
+# ──────────────────────────────
+# 2. Aggregate + publish + commit
+# ──────────────────────────────
+  publish:
+    name: Publish & commit bottles
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download bottle artefacts
+        uses: actions/download-artifact@v4
+        with:
+          path: .
+          pattern: bottles-*
+          merge-multiple: true            # puts every bottle in $PWD
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
 
       - name: Publish bottles
+        env:
+          # built-in token is enough for public taps
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: Homebrew/actions/post-build@main
         with:
-          bottles-directory: bottles
+          bottles-directory: .
           logs-directory: .
-          runner: ${{ matrix.os }}
+          runner: macos-latest
           upload-bottles: true
           cleanup: true
