@@ -38,17 +38,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare bottles dir env
-        run: echo "BOTTLES_DIR=$RUNNER_TEMP/bottles" >> "$GITHUB_ENV"
+
+      - name: Prepare dirs
+        run: |
+          echo "BOTTLES_DIR=$GITHUB_WORKSPACE/bottles" >>"$GITHUB_ENV"
+          echo "LOGS_DIR=$GITHUB_WORKSPACE/bottles/logs" >>"$GITHUB_ENV"
+          mkdir -p "$BOTTLES_DIR" "$LOGS_DIR"
 
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
       - name: Build and bottle zkstack
         run: |
-          brew install --build-bottle Formula/zkstack.rb
-          mkdir -p "$BOTTLES_DIR"
-          brew bottle --json zkstack
+          brew test-bot \
+            --only-formulae \
+            --keep-old \
+            --only-json-tab \
+            --skip-online-checks \
+            zkstack
           mv *.bottle.* "$BOTTLES_DIR/"
 
       - uses: actions/upload-artifact@v4
@@ -66,6 +73,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Prepare dirs
+        run: |
+          echo "BOTTLES_DIR=$GITHUB_WORKSPACE/bottles" >>"$GITHUB_ENV"
+          echo "LOGS_DIR=$GITHUB_WORKSPACE/bottles/logs" >>"$GITHUB_ENV"
+          mkdir -p "$BOTTLES_DIR" "$LOGS_DIR"
 
       - uses: actions/download-artifact@v4
         with:
@@ -83,7 +96,7 @@ jobs:
         uses: Homebrew/actions/post-build@main
         with:
           bottles-directory: ${{ env.BOTTLES_DIR }}
-          logs-directory: ${{ env.BOTTLES_DIR }}
+          logs-directory: ${{ env.LOGS_DIR }} 
           runner: ubuntu-latest
           upload-bottles: true
           cleanup: false
