@@ -23,6 +23,7 @@ on:
 # ──────────────────────────────
 env:
   HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+  BOTTLES_DIR: ${{ runner.temp }}/bottles
 
 # ──────────────────────────────
 # 1. Build bottles on every OS
@@ -45,14 +46,14 @@ jobs:
       - name: Build and bottle zkstack
         run: |
           brew install --build-bottle Formula/zkstack.rb
-          mkdir -p bottles
+          mkdir -p "$BOTTLES_DIR"
           brew bottle --json zkstack
-          mv *.bottle.* bottles
+          mv *.bottle.* "$BOTTLES_DIR/"
 
       - uses: actions/upload-artifact@v4
         with:
           name: bottles-${{ matrix.runner }}
-          path: bottles/*.* 
+          path: ${{ env.BOTTLES_DIR }}/*
 
 # ──────────────────────────────
 # 2. Aggregate + publish + commit
@@ -69,13 +70,7 @@ jobs:
         with:
           pattern: bottles-*            # grabs all runner artifacts
           merge-multiple: true          # extracts *into* bottles-${id}/
-          path: bottles 
-
-      - name: Flatten bottle tree
-        run: |
-          shopt -s globstar nullglob
-          mv bottles/**/* bottles/ || true
-          find bottles -type d ! -path bottles -empty -delete
+          path: ${{ env.BOTTLES_DIR }}
 
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
@@ -86,8 +81,8 @@ jobs:
           HOMEBREW_GITHUB_PACKAGES_TOKEN: ${{ secrets.PAT_PUSH }}
         uses: Homebrew/actions/post-build@main
         with:
-          bottles-directory: bottles
-          logs-directory: bottles
+          bottles-directory: ${{ env.BOTTLES_DIR }}
+          logs-directory: ${{ env.BOTTLES_DIR }}
           runner: ubuntu-latest
           upload-bottles: true
           cleanup: false
