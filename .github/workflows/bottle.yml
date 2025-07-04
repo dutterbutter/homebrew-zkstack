@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bottles-${{ matrix.runner }}
-          path: "*.bottle.*"
+          path: ${{ github.workspace }}/bottles
 
 # ──────────────────────────────
 # 2. Aggregate + publish + commit
