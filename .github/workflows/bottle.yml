@@ -23,7 +23,6 @@ on:
 # ──────────────────────────────
 env:
   HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
-  BOTTLES_DIR: ${{ runner.temp }}/bottles
 
 # ──────────────────────────────
 # 1. Build bottles on every OS
@@ -39,6 +38,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare bottles dir env
+        run: echo "BOTTLES_DIR=$RUNNER_TEMP/bottles" >> "$GITHUB_ENV"
 
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
