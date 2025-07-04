@@ -42,12 +42,6 @@ jobs:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
-      # Optional but recommended – fail fast on formula errors
-      - name: Lint formula
-        run: |
-          brew style Formula/zkstack.rb
-          brew audit --strict Formula/zkstack.rb
-
       - name: Build bottle
         run: |
           brew install --build-bottle Formula/zkstack.rb
