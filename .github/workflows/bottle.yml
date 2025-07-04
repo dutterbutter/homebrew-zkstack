@@ -45,7 +45,9 @@ jobs:
       - name: Build bottle
         run: |
           brew install --build-bottle Formula/zkstack.rb
+          mkdir ${{ github.workspace }}/bottles
           brew bottle --json zkstack
+          mv *.bottle.* ${{ github.workspace }}/bottles
 
       - name: Upload bottle artifact
         uses: actions/upload-artifact@v4
