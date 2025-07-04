@@ -71,6 +71,12 @@ jobs:
           merge-multiple: true          # extracts *into* bottles-${id}/
           path: bottles 
 
+      - name: Flatten bottle tree
+        run: |
+          shopt -s globstar nullglob
+          mv bottles/**/* bottles/ || true
+          find bottles -type d ! -path bottles -empty -delete
+
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
