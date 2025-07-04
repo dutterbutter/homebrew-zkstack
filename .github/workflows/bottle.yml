@@ -39,4 +39,5 @@ jobs:
           bottles-directory: bottles
           logs-directory: .
           runner: ${{ matrix.os }}
+          upload-bottles: true
           cleanup: true
