@@ -25,8 +25,8 @@ class Zkstack < Formula
     # ─── shell completions ──────────────────────────────────────────────────────
     # Pre-generated completion scripts live under crates/zkstack/completion/
     completion_dir = buildpath/"crates/zkstack/completion"
-    bash_completion.install completion_dir/"zkstack.bash" => "zkstack"
-    zsh_completion.install  completion_dir/"_zkstack"
+    bash_completion.install completion_dir/"zkstack.sh" => "zkstack"
+    zsh_completion.install  completion_dir/"_zkstack.zsh"
     fish_completion.install completion_dir/"zkstack.fish"
   end
 
