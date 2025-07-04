@@ -61,6 +61,7 @@ jobs:
             --only-formulae \
             --keep-old \
             --skip-online-checks \
+            --skip-dependents \
             zkstack
           mv *.bottle.* "$BOTTLES_DIR/"
 
