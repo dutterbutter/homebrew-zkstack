@@ -35,7 +35,7 @@ class Zkstack < Formula
     assert_match version.to_s, shell_output("#{bin}/zkstack --version")
 
     # Basic help text sanity-check
-    assert_match "USAGE", shell_output("#{bin}/zkstack --help")
+    assert_match(/Usage:/i, shell_output("#{bin}/zkstack --help"))
 
     # Bash completion script loads and registers a completion function
     assert_match "-F _zkstack",

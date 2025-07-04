@@ -52,7 +52,6 @@ jobs:
           echo "BOTTLES_DIR=$BOTTLES_DIR" >> "$GITHUB_ENV"
           echo "LOGS_DIR=$LOGS_DIR"       >> "$GITHUB_ENV"
 
-
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
@@ -61,7 +60,6 @@ jobs:
           brew test-bot \
             --only-formulae \
             --keep-old \
-            --only-json-tab \
             --skip-online-checks \
             zkstack
           mv *.bottle.* "$BOTTLES_DIR/"
